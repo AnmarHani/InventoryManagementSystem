@@ -105,7 +105,30 @@ class Observable:
         for observer in self.observers:
             observer.update(self)
 
+## Decorator Pattern
+class ItemDecorator(Item):
+    def __init__(self, item: Item):
+        self.item = item
 
+    def get_price(self):
+        return self.item.get_price()
+
+class DiscountedItem(ItemDecorator):
+    def __init__(self, item: Item, discount: float):
+        super().__init__(item)
+        self.discount = discount
+
+    def get_price(self):
+        return super().get_price() * (1 - self.discount)
+
+class SpecialOfferItem(ItemDecorator):
+    def __init__(self, item: Item, special_offer: float):
+        super().__init__(item)
+        self.special_offer = special_offer
+
+    def get_price(self):
+        return super().get_price() - self.special_offer
+    
 # Client Class
 class Client:
     def __init__(self, inventory_adapter):
