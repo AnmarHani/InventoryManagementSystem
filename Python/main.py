@@ -48,13 +48,28 @@ class Box(Item):
 
     def get_price(self):
         return sum(item.get_price() for item in self.items)
+    
+    def __str__(self) -> str:
+        return "Items in this box are " + self.items.__str__()
 
 class SingleItem(Item):
-    def __init__(self, price):
+
+    def set_name(self, name):
+        self.name = name
+        return self
+    
+    def get_name(self):
+        return self.name
+    
+    def set_price(self, price):
         self.price = price
+        return self
 
     def get_price(self):
         return self.price
+    
+    def __str__(self) -> str:
+        return "Item " + self.name + " has price of " + self.price
     
 ## Adapter Pattern
 class InventoryAdapter:
@@ -150,13 +165,21 @@ def main():
     inventory = Inventory()
     item_factory = ConcreteItemFactory()
     box = item_factory.create_item('Box')
-    single_item = item_factory.create_item('SingleItem')
+    pizza = item_factory.create_item('SingleItem')
+    pizza.set_price(100).set_name("Pizza")
+
+    bottle = item_factory.create_item('SingleItem')
+    bottle.set_price(100).set_name("Bottle of Water")
+
+    box.add_item(pizza)
+    box.add_item(bottle)
+
 
     inventory_adapter = InventoryAdapter(inventory)
     client = Client(inventory_adapter)
 
     inventory_adapter.add_item(box, 10)
-    inventory_adapter.add_item(single_item, 20)
+    inventory_adapter.add_item(bottle, 20)
 
     client.check_availability(box)
     client.purchase_item(box, 5)
