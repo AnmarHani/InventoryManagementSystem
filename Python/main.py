@@ -83,6 +83,8 @@ class Box(Item):
 
 
 class SingleItem(Item):
+    def __init__(self, pricing_strategy):
+        self.pricing_strategy = pricing_strategy
 
     def set_name(self, name):
         self.name = name
@@ -96,11 +98,10 @@ class SingleItem(Item):
         return self
 
     def get_price(self):
-        return self.price
+        return self.pricing_strategy.get_price(self.price)
 
     def __str__(self) -> str:
-        return "Item " + self.name + f" has price of {self.price}"
-
+        return "Item " + self.name + f" has price of {self.get_price()}"
 
 ## Adapter Pattern
 class InventoryAdapter:
@@ -123,6 +124,32 @@ class InventoryAdapter:
 
 
 # Behavioural Patterns
+## Strategy Pattern
+class PricingStrategy(ABC):
+    @abstractmethod
+    def get_price(self, base_price: float) -> float:
+        pass
+
+
+class RegularPrice(PricingStrategy):
+    def get_price(self, base_price: float) -> float:
+        return base_price
+
+
+class DiscountPrice(PricingStrategy):
+    def __init__(self, discount: float):
+        self.discount = discount
+
+    def get_price(self, base_price: float) -> float:
+        return base_price * (1 - self.discount)
+
+
+class SpecialOfferPrice(PricingStrategy):
+    def __init__(self, special_offer: float):
+        self.special_offer = special_offer
+
+    def get_price(self, base_price: float) -> float:
+        return base_price - self.special_offer
 
 
 ## Observer Pattern
@@ -182,39 +209,6 @@ class Observable:
             observer.update(message)
 
 
-## Decorator Pattern
-class ItemDecorator(Item):
-    def __init__(self, item: Item):
-        self.item = item
-
-    def get_price(self):
-        return self.item.get_price()
-
-
-class DiscountedItem(ItemDecorator):
-    def __init__(self, item: Item, discount: float):
-        super().__init__(item)
-        self.discount = discount
-
-    def get_price(self):
-        return super().get_price() * (1 - self.discount)
-
-    def __str__(self) -> str:
-        return self.item.__str__()
-
-
-class SpecialOfferItem(ItemDecorator):
-    def __init__(self, item: Item, special_offer: float):
-        super().__init__(item)
-        self.special_offer = special_offer
-
-    def get_price(self):
-        return super().get_price() - self.special_offer
-
-    def __str__(self) -> str:
-        return self.item.__str__()
-
-
 # Customer Class
 class Customer:
     def __init__(self, inventory_adapter):
@@ -242,22 +236,16 @@ def main():
     box = item_factory.create_item("Box")
     box.set_name("Food Box")
 
-    pizza = item_factory.create_item("SingleItem")
+    pizza = SingleItem(RegularPrice())
     pizza.set_price(100).set_name("Pizza")
     print(pizza)
 
-    bottle = item_factory.create_item("SingleItem")
+    bottle = SingleItem(DiscountPrice(0.1))  # 10% discount
     bottle.set_price(100).set_name("Bottle of Water")
     print(bottle)
 
-    # Apply a discount to the bottle
-    discounted_bottle = DiscountedItem(bottle, 0.1)  # 10% discount
-    print(
-        f"Discounted {discounted_bottle.item.get_name()} has price of {discounted_bottle.get_price()}"
-    )
-
     box.add_item(pizza)
-    box.add_item(discounted_bottle)
+    box.add_item(bottle)
 
     print(box)
 
