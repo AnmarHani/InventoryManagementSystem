@@ -1,0 +1,24 @@
+@startuml
+
+class Inventory {
+    +add_item(item, quantity)
+    +remove_item(item, quantity)
+    +check_item(item)
+}
+
+class InventoryAdapter {
+    -inventory: Inventory
+    +add_item(item, quantity)
+    +remove_item(item, quantity)
+    +check_item(item)
+}
+
+class Customer {
+    +purchase_item(item, quantity)
+    +check_availability(item)
+}
+
+InventoryAdapter -right-> Inventory : adapts
+Customer -down-> InventoryAdapter : uses
+
+@enduml

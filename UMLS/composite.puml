@@ -1,0 +1,27 @@
+@startuml
+
+interface Item {
+    +get_price(): Float
+    +get_name(): String
+}
+
+class Box {
+    -items: List<Item>
+    +add(item: Item): void
+    +remove(item: Item): void
+    +get_children(): List<Item>
+    +get_price(): Float
+    +get_name(): String
+}
+
+class SingleItem {
+    -price: Float
+    -name: String
+    +get_price(): Float
+    +get_name(): String
+}
+
+Box -up-|> Item : implements
+SingleItem -up-|> Item : implements
+
+@enduml
