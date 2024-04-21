@@ -25,17 +25,40 @@ class SingleItem {
 Box --|> Item : implements
 SingleItem --|> Item : implements
 
+abstract class PricingStrategy {
+    {abstract} +get_price(base_price: Float): Float
+}
+
+class RegularPrice {
+    +get_price(base_price: Float): Float
+}
+
+class DiscountPrice {
+    -discount: Float
+    +get_price(base_price: Float): Float
+}
+
+class SpecialOfferPrice {
+    -special_offer: Float
+    +get_price(base_price: Float): Float
+}
+
+RegularPrice --|> PricingStrategy : implements
+DiscountPrice --|> PricingStrategy : implements
+SpecialOfferPrice --|> PricingStrategy : implements
+
 abstract class ItemFactory {
-    {abstract} +create_item(item_type: String): Item
+    {abstract} +create_item(item_type: String, pricing_strategy: PricingStrategy): Item
 }
 
 class ConcreteItemFactory {
-    +create_item(item_type: String): Item
+    +create_item(item_type: String, pricing_strategy: PricingStrategy): Item
 }
 
 ConcreteItemFactory --|> ItemFactory : implements
 
 ConcreteItemFactory ..> Box : creates
 ConcreteItemFactory ..> SingleItem : creates
+ConcreteItemFactory ..> PricingStrategy : uses
 
 @enduml
