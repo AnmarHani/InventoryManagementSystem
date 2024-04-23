@@ -16,7 +16,6 @@ class ItemFactory(ABC):
         """
         This method creates an item based on the item type. It takes the item type as an argument.
         """
-
         pass
 
 

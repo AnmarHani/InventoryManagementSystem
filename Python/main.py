@@ -17,15 +17,15 @@ if TYPE_CHECKING:
 class Customer:
     def __init__(self, inventory_adapter: "InventoryAdapter") -> None:
         """
-This method initializes the Customer class. It takes an inventory adapter as an argument.
-"""
+        This method initializes the Customer class. It takes an inventory adapter as an argument.
+        """
 
         self.inventory_adapter = inventory_adapter
 
     def purchase_item(self, item: "Item", quantity: int) -> str:
         """
-This method purchases an item from the inventory. It takes an item and a quantity as arguments.
-"""
+        This method purchases an item from the inventory. It takes an item and a quantity as arguments.
+        """
 
         try:
             self.inventory_adapter.remove_item(item, quantity)
@@ -35,11 +35,12 @@ This method purchases an item from the inventory. It takes an item and a quantit
 
     def check_availability(self, item: "Item") -> int:
         """
-This method checks the availability of an item in the inventory. It takes an item as an argument.
-"""
+        This method checks the availability of an item in the inventory. It takes an item as an argument.
+        """
 
         quantity = self.inventory_adapter.check_item(item)
         return quantity
+
 
 # Main Function
 def main() -> None:
@@ -55,7 +56,9 @@ def main() -> None:
     pizza.set_price(100).set_name("Pizza")
     print(pizza)
 
-    bottle: "SingleItem" = item_factory.create_item("SingleItem", DiscountPrice(0.1))  # 10% discount
+    bottle: "SingleItem" = item_factory.create_item(
+        "SingleItem", DiscountPrice(0.1)
+    )  # 10% discount
     bottle.set_price(100).set_name("Bottle of Water")
     print(bottle)
 
@@ -72,10 +75,8 @@ def main() -> None:
     observable.attach(supplier)
     observable.attach(manager)
 
-
     inventory_adapter: InventoryAdapter = InventoryAdapter(inventory, observable)
     customer: Customer = Customer(inventory_adapter)
-
 
     # Add items to inventory
     inventory_adapter.add_item(box, 10)
@@ -88,6 +89,7 @@ def main() -> None:
     print(
         f"Availability of {box.get_name()}: {customer.check_availability(box)} in the Inventory {Inventory.get_instance()}"
     )
+
 
 if __name__ == "__main__":
     main()

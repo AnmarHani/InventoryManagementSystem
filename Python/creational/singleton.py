@@ -4,10 +4,14 @@ from typing import Dict, Optional, Type, Union, TYPE_CHECKING
 if TYPE_CHECKING:
     from structural.composite import Item
 
+
+
 ## Singleton Pattern
 class Inventory:
     _instance = None
-    items: Dict["Item", int] = {}
+    items: Dict["Item", int] = {
+        "Pizza": 5
+    }
     name: str = ""
 
     @staticmethod

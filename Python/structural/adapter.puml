@@ -1,5 +1,4 @@
 @startuml
-
 class Inventory {
     +add_item(item, quantity)
     +remove_item(item, quantity)
@@ -18,7 +17,19 @@ class Customer {
     +check_availability(item)
 }
 
-InventoryAdapter -right-> Inventory : adapts
-Customer -down-> InventoryAdapter : uses
+interface Observer {
+    +update(subject: Observable)
+}
 
+class Observable {
+    -observers: List<Observer>
+    +attach(observer: Observer)
+    +detach(observer: Observer)
+    +notify(message: String)
+}
+
+InventoryAdapter -right-> Inventory : adapts
+InventoryAdapter -left-> Observable : notify
+Customer -down-> InventoryAdapter : uses
+Observable "1" o-- "0..*" Observer : notifies >
 @enduml
